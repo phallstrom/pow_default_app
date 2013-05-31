@@ -7,7 +7,7 @@ This app currently works with `.dev` domains and with `.xip.io` domains.
 ## Installation
 
 1. Install and configure [Pow](http://pow.cx/).
-1. Download this repository and move it to `$HOME/.pow/default`.
+1. Download this repository and move `pow_default_app` to `$HOME/.pow/default`.
 1. Configure RVM/rbenv/etc to suite your environment.
 1. `bundle install`
 2. Open `http://localhost.dev/` in your browser.
@@ -15,6 +15,8 @@ This app currently works with `.dev` domains and with `.xip.io` domains.
 If everything is right, you should see a page linking to your other Pow applications.
 
 To use with [xip.io](http://xip.io/), open `http://10.0.0.100.xip.io/` in your browser (replace 10.0.0.100 with your IP address).
+
+**Note:** Be sure to leave `tmp/always_restart.txt` alone.  Without that file, the app will not recognize new Pow apps unless you restart Pow itself.
 
 
 ## Todo
