@@ -1,3 +1,5 @@
+require "bundler/setup"
+
 require "rack/request"
 require "rack/response"
 
