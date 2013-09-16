@@ -50,9 +50,9 @@ class PowDefaultApp
         # try to resolve the realpath to the app
         path = Pathname.new(f).realpath.to_s
         path.gsub!(pow_path, "~/.pow") # shorten path if the app isn't a symlink
-        path.gsub!(ENV['HOME'], "~") # shorten path if it is symlinks
+        path.gsub!(ENV['HOME'], "~") # shorten path if it is a symlink
       rescue Errno::ENOENT
-        # symlink taget doesn't exists
+        # symlink target doesn't exists
         path = '++ REMOVED ++'
       end
       url = [req.scheme, '://', name, tld].join
