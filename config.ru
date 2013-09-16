@@ -42,9 +42,19 @@ class PowDefaultApp
             <ol>
     }
 
-    Dir.glob(File.join(ENV['HOME'], '.pow', '*')).map do |f|
+    pow_path = Pathname.new(File.join(ENV['HOME'], '.pow')).realpath.to_s
+    Dir.glob("#{pow_path}/*").map do |f|
       name = File.basename(f)
-      path = File.readlink(f).gsub(ENV['HOME'], "~")
+
+      begin
+        # try to resolve the realpath to the app
+        path = Pathname.new(f).realpath.to_s
+        path.gsub!(pow_path, "~/.pow") # shorten path if the app isn't a symlink
+        path.gsub!(ENV['HOME'], "~") # shorten path if it is symlinks
+      rescue Errno::ENOENT
+        # symlink taget doesn't exists
+        path = '++ REMOVED ++'
+      end
       url = [req.scheme, '://', name, tld].join
       unless name == 'default'
         res.write "<li><a href='#{url}'>#{name}.dev <span>#{path}</span></a></li>"
