@@ -21,16 +21,28 @@ class PowDefaultApp
           <meta charset="utf-8">
           <meta name="viewport" content="width=device-width, initial-scale=1">
           <style type="text/css">
-            body { font-family: 'Helvetica Neue', Helvetica, sans-serif; line-height: 1.5em; font-size: 18px; text-shadow: 0 1px 0 #fff; color: #000; background: #e0e0d8 url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAABkCAMAAACIElGlAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDowQTgwMTE3NDA3MjA2ODExQTk2MTkxMEUxMUNDNTU4RSIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDoxOTM2RUEzMzU4MDcxMUUwOUI5Rjg4RDU5OEJCMTRFNSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDoxOTM2RUEzMjU4MDcxMUUwOUI5Rjg4RDU5OEJCMTRFNSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjlBMTc0MTU5MTQyMDY4MTFBOTYxOTEwRTExQ0M1NThFIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjBBODAxMTc0MDcyMDY4MTFBOTYxOTEwRTExQ0M1NThFIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+7tCt/AAAAC1QTFRF0tLKw8O8xcW+yMjBx8e/5OTeysrDzMzF4eHb5OTd4uLd4+PdyMjAycnB4ODY/vRIvgAAAEhJREFUeNrsyjkSgDAMQ1GBlyQsuv9x8TCMhzY0NH6NfiEsCWuCqh5mZwxExEiLgftgMHe0jbe9ofPRwTSVLx8PlZWVP+clwABkUjOrFH44/gAAAABJRU5ErkJggg==') 0 0 repeat-x; }
-            ol { margin: 30px 0 0 0; padding: 2px 0; border-radius: 2px; color: #b4a99d; list-style: none; border-top: 1px solid #c7c7bd; border-bottom: 1px solid #c7c7bd; }
+            body { padding: 0; margin: 15px; font-family: 'Helvetica Neue', Helvetica, sans-serif; line-height: 1.5em; font-size: 18px; text-shadow: 0 1px 0 #fff; color: #000; background: #e0e0d8 url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAABkCAMAAACIElGlAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDowQTgwMTE3NDA3MjA2ODExQTk2MTkxMEUxMUNDNTU4RSIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDoxOTM2RUEzMzU4MDcxMUUwOUI5Rjg4RDU5OEJCMTRFNSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDoxOTM2RUEzMjU4MDcxMUUwOUI5Rjg4RDU5OEJCMTRFNSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjlBMTc0MTU5MTQyMDY4MTFBOTYxOTEwRTExQ0M1NThFIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjBBODAxMTc0MDcyMDY4MTFBOTYxOTEwRTExQ0M1NThFIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+7tCt/AAAAC1QTFRF0tLKw8O8xcW+yMjBx8e/5OTeysrDzMzF4eHb5OTd4uLd4+PdyMjAycnB4ODY/vRIvgAAAEhJREFUeNrsyjkSgDAMQ1GBlyQsuv9x8TCMhzY0NH6NfiEsCWuCqh5mZwxExEiLgftgMHe0jbe9ofPRwTSVLx8PlZWVP+clwABkUjOrFH44/gAAAABJRU5ErkJggg==') 0 0 repeat-x; }
+            ol { margin: 0; padding: 2px 0; border-radius: 2px; color: #b4a99d; list-style: none; border-top: 1px solid #c7c7bd; border-bottom: 1px solid #c7c7bd; }
             li:last-child { border: 0; }
-            h1 { font-size: 30px; margin: 0; font-weight: 300; }
+            h1 { font-size: 30px; margin: 0 0 30px 0; font-weight: 300; }
             h1 span { letter-spacing: -1px; font-weight: 900; }
             a { color: #222; text-decoration: none; display: block; padding: 5px 15px; font-weight: 600; font-size: 16px; outline: none; background: #d2d2ca; margin-bottom: 1px; }
             a span { display: block; font-size: 12px; line-height: 16px; text-shadow: none; padding: 0; color: #777; font-weight: 400; }
             a:hover, a:focus { color: #c56342; background: #c7c7bd; }
             img { position: absolute; left: 0; top: 68px; }
             .container { position: relative; width: 500px; margin: 0 auto; padding: 80px 0 0 450px; }
+
+            @media only screen and (min-width: 768px) and (max-width: 959px) {
+              h1 { font-size: 25px; margin: 40px 0 20px 0; }
+              img { display: none; }
+              .container { width: 700px; padding: 0 0 0 0; }
+            }
+
+            @media only screen and (max-width: 767px) {
+              h1 { font-size: 20px; margin: 30px 0 20px 0; }
+              img { display: none; }
+              .container { width: 100%; padding: 0; }
+            }
           </style>
         </head>
         <body>
