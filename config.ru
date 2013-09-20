@@ -65,7 +65,7 @@ class PowDefaultApp
         path.gsub!(ENV['HOME'], "~") # shorten path if it is a symlink
       rescue Errno::ENOENT
         # symlink target doesn't exists
-        path = '++ REMOVED ++'
+        path = '++ DOES NOT EXIST ++'
       end
       url = [req.scheme, '://', name, tld].join
       unless name == 'default'
