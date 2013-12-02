@@ -1,6 +1,8 @@
 require "bundler/setup"
 require "rack/request"
 require "rack/response"
+require "qr4r"
+require "socket"
 
 class PowDefaultApp
   def call(env)
@@ -23,6 +25,9 @@ class PowDefaultApp
           <style type="text/css">
             body { padding: 0; margin: 15px; font-family: 'Helvetica Neue', Helvetica, sans-serif; line-height: 1.5em; font-size: 18px; text-shadow: 0 1px 0 #fff; color: #000; background: #e0e0d8 url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAABkCAMAAACIElGlAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDowQTgwMTE3NDA3MjA2ODExQTk2MTkxMEUxMUNDNTU4RSIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDoxOTM2RUEzMzU4MDcxMUUwOUI5Rjg4RDU5OEJCMTRFNSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDoxOTM2RUEzMjU4MDcxMUUwOUI5Rjg4RDU5OEJCMTRFNSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjlBMTc0MTU5MTQyMDY4MTFBOTYxOTEwRTExQ0M1NThFIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjBBODAxMTc0MDcyMDY4MTFBOTYxOTEwRTExQ0M1NThFIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+7tCt/AAAAC1QTFRF0tLKw8O8xcW+yMjBx8e/5OTeysrDzMzF4eHb5OTd4uLd4+PdyMjAycnB4ODY/vRIvgAAAEhJREFUeNrsyjkSgDAMQ1GBlyQsuv9x8TCMhzY0NH6NfiEsCWuCqh5mZwxExEiLgftgMHe0jbe9ofPRwTSVLx8PlZWVP+clwABkUjOrFH44/gAAAABJRU5ErkJggg==') 0 0 repeat-x; }
             ol { margin: 0; padding: 2px 0; border-radius: 2px; color: #b4a99d; list-style: none; border-top: 1px solid #c7c7bd; border-bottom: 1px solid #c7c7bd; }
+            li { position: relative; }
+            li img { display: none; position: absolute; left: auto; top: auto; right: 5px; bottom: 5px; z-index: 10; border: 10px solid #fff; -webkit-box-shadow:  0px 0px 5px 0px rgba(0, 0, 0, 0.3); box-shadow:  0px 0px 5px 0px rgba(0, 0, 0, 0.3); }
+            li a:hover img, li a:focus img { display: block; }
             li:last-child { border: 0; }
             h1 { font-size: 30px; margin: 0 0 30px 0; font-weight: 300; }
             h1 span { letter-spacing: -1px; font-weight: 900; }
@@ -54,6 +59,8 @@ class PowDefaultApp
             <ol>
     }
 
+    local_ip_address = Socket::getaddrinfo(Socket.gethostname,"echo",Socket::AF_INET)[0][3]
+
     pow_path = Pathname.new(File.join(ENV['HOME'], '.pow')).realpath.to_s
     Dir.glob("#{pow_path}/*").map do |f|
       name = File.basename(f)
@@ -67,9 +74,15 @@ class PowDefaultApp
         # symlink target doesn't exists
         path = '++ DOES NOT EXIST ++'
       end
-      url = [req.scheme, '://', name, tld].join
+      local_url = [req.scheme, '://', name, tld].join
+      remote_url = [req.scheme, '://', name, '.', local_ip_address, '.xip.io'].join
+
+      # generate qrcode
+      qrcode_img_path = "public/images/qrcode_#{local_ip_address.gsub('.', '')}_#{name}.png"
+      Qr4r::encode(remote_url, qrcode_img_path) unless File.exist?(qrcode_img_path)
+
       unless name == 'default'
-        res.write "<li><a href='#{url}'>#{name}.dev <span>#{path}</span></a></li>"
+        res.write "<li><a href='#{local_url}'>#{name}.dev <span>#{path}</span> <img src='#{qrcode_img_path[6..-1]}' title='#{remote_url}' /></a></li>"
       end
     end
 
