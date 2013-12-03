@@ -2,3 +2,4 @@
 .powrc
 .ruby-gemset
 .ruby-version
+public/images/*.png
