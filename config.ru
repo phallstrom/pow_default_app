@@ -36,6 +36,7 @@ class PowDefaultApp
             a:hover, a:focus { color: #c56342; background: #c7c7bd; }
             img { position: absolute; left: 0; top: 68px; }
             .container { position: relative; width: 500px; margin: 0 auto; padding: 80px 0 0 450px; }
+            .error { position: relative; font-size: 0.75em; color: #ff3300; }
 
             @media only screen and (min-width: 768px) and (max-width: 959px) {
               h1 { font-size: 25px; margin: 40px 0 20px 0; }
@@ -61,6 +62,7 @@ class PowDefaultApp
 
     local_ip_address = Socket::getaddrinfo(Socket.gethostname,"echo",Socket::AF_INET)[0][3]
 
+    error = nil
     pow_path = Pathname.new(File.join(ENV['HOME'], '.pow')).realpath.to_s
     Dir.glob("#{pow_path}/*").map do |f|
       name = File.basename(f)
@@ -77,17 +79,28 @@ class PowDefaultApp
       local_url = [req.scheme, '://', name, tld].join
       remote_url = [req.scheme, '://', name, '.', local_ip_address, '.xip.io'].join
 
-      # generate qrcode
+      # try to generate qrcodes
       qrcode_img_path = "public/images/qrcode_#{local_ip_address.gsub('.', '')}_#{name}.png"
-      Qr4r::encode(remote_url, qrcode_img_path) unless File.exist?(qrcode_img_path)
+      begin
+        Qr4r::encode(remote_url, qrcode_img_path) unless File.exist?(qrcode_img_path)
+      rescue Exception => error
+        qrcode_img_path = nil
+      end
 
       unless name == 'default'
-        res.write "<li><a href='#{local_url}'>#{name}.dev <span>#{path}</span> <img src='#{qrcode_img_path[6..-1]}' title='#{remote_url}' /></a></li>"
+        if qrcode_img_path.nil?
+          res.write "<li><a href='#{local_url}'>#{name}.dev <span>#{path}</span></a></li>"
+        else
+          res.write "<li><a href='#{local_url}'>#{name}.dev <span>#{path}</span> <img src='#{qrcode_img_path[6..-1]}' title='#{remote_url}' /></a></li>"
+        end
       end
     end
 
+    res.write "</ol>"
+    unless error.nil?
+      res.write "<div class='error'>#{error.class}: #{error.message}</div>"
+    end
     res.write %q{
-            </ol>
           </div>
         </body>
       </html>
