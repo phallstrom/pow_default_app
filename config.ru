@@ -3,20 +3,37 @@ require "rack/request"
 require "rack/response"
 require "qr4r"
 require "socket"
+require 'net/http'
+require 'json'
+
 
 class PowDefaultApp
   def call(env)
-    req = Rack::Request.new(env)
-    res = Rack::Response.new
 
-    res['Content-Type'] = 'text/html'
+    request = Rack::Request.new(env)
+    response = Rack::Response.new
 
-    tld = '.dev'
-    if req.host =~ /^.*?(\d+\.\d+\.\d+\.\d+\.xip\.io)$/
-      tld = ".#{$1}"
+    response['Content-Type'] = 'text/html'
+
+
+    tld = 'dev'
+    if request.host =~ /^.*?(\d+\.\d+\.\d+\.\d+\.xip\.io)$/
+      tld = $1
+    else
+      begin
+        req = Net::HTTP::Get.new('/config.json')
+        req.add_field('Host', 'pow')
+        res = Net::HTTP.start('localhost') {|http| http.request(req) }
+        if res.is_a? Net::HTTPSuccess
+          json = JSON.parse(res.body)
+          tld = json['domains'].first
+        end
+      rescue
+        tld = 'dev'
+      end
     end
 
-    res.write %q{
+    response.write %q{
       <!DOCTYPE html>
       <html>
         <head>
@@ -76,8 +93,8 @@ class PowDefaultApp
         # symlink target doesn't exists
         path = '++ DOES NOT EXIST ++'
       end
-      local_url = [req.scheme, '://', name, tld].join
-      remote_url = [req.scheme, '://', name, '.', local_ip_address, '.xip.io'].join
+      local_url = [request.scheme, '://', name, '.', tld].join
+      remote_url = [request.scheme, '://', name, '.', local_ip_address, '.xip.io'].join
 
       # try to generate qrcodes
       qrcode_img_path = "public/images/qrcode_#{local_ip_address.gsub('.', '')}_#{name}.png"
@@ -89,24 +106,24 @@ class PowDefaultApp
 
       unless name == 'default'
         if qrcode_img_path.nil?
-          res.write "<li><a href='#{local_url}'>#{name}.dev <span>#{path}</span></a></li>"
+          response.write "<li><a href='#{local_url}'>#{name}.#{tld} <span>#{path}</span></a></li>"
         else
-          res.write "<li><a href='#{local_url}'>#{name}.dev <span>#{path}</span> <img src='#{qrcode_img_path[6..-1]}' title='#{remote_url}' /></a></li>"
+          response.write "<li><a href='#{local_url}'>#{name}.#{tld} <span>#{path}</span> <img src='#{qrcode_img_path[6..-1]}' title='#{remote_url}' /></a></li>"
         end
       end
     end
 
-    res.write "</ol>"
+    response.write "</ol>"
     unless error.nil?
-      res.write "<div class='error'>#{error.class}: #{error.message}</div>"
+      response.write "<div class='error'>#{error.class}: #{error.message}</div>"
     end
-    res.write %q{
+    response.write %q{
           </div>
         </body>
       </html>
     }
 
-    res.finish
+    response.finish
   end
 end
 
